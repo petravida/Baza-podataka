@@ -1,0 +1,49 @@
+CREATE DATABASE Books 
+
+CREATE TABLE "State"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"Continet" varchar (50) not null,
+"Size" decimal null)
+
+CREATE TABLE "Author"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"Surname" varchar (50) not null,
+"Date of birth" datetime not null,
+State_Id UNIQUEIDENTIFIER FOREIGN KEY REFERENCES State (Id),
+"AuthorsSpecification_Id" UNIQUEIDENTIFIER not null)
+
+CREATE TABLE "AuthorsSpecification"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY,
+"First Book" varchar (50) not null,
+"Numbers of published books" int not null,
+"Prizes" varchar (50) null,
+"Author_Id" UNIQUEIDENTIFIER not null)
+
+
+ALTER TABLE Author
+ADD CONSTRAINT FK_Author_AuthorsSpecification FOREIGN KEY (AuthorsSpecification_Id) REFERENCES AuthorsSpecification (Id)
+
+ALTER TABLE AuthorsSpecification
+ADD CONSTRAINT FK_AuthorsSpecification_Author FOREIGN KEY (Author_Id) REFERENCES Author (Id)
+
+CREATE TABLE "Book"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Title" varchar (100) not null,
+"Number of pages" int not null,
+"Genre" varchar (50) null,
+"Author_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Author (Id))
+
+CREATE TABLE "PublishingHouse"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null, 
+"Name" varchar (50) not null,
+"City" varchar (50) not null,
+"Director" varchar (50) null)
+
+CREATE TABLE "BookPublishingHouse"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Book_Id" UNIQUEIDENTIFIER not null,
+"PublishingHouse_Id" UNIQUEIDENTIFIER not null,
+CONSTRAINT FK_BookPublishingHouse_Book_BookId FOREIGN KEY (Book_Id) REFERENCES Book ("Id"),
+CONSTRAINT FK_BookPublishingHouse_PublishingHouse_PublishingHouseId FOREIGN KEY (PublishingHouse_Id) REFERENCES PublishingHouse ("Id"))
