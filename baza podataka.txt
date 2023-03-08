@@ -11,22 +11,14 @@ CREATE TABLE "Author"
 "Name" varchar (50) not null,
 "Surname" varchar (50) not null,
 "Date of birth" datetime not null,
-State_Id UNIQUEIDENTIFIER FOREIGN KEY REFERENCES State (Id),
-"AuthorsSpecification_Id" UNIQUEIDENTIFIER not null)
+"State_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES State (Id))
 
 CREATE TABLE "AuthorsSpecification"
-("Id" UNIQUEIDENTIFIER PRIMARY KEY,
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
 "First Book" varchar (50) not null,
 "Numbers of published books" int not null,
 "Prizes" varchar (50) null,
-"Author_Id" UNIQUEIDENTIFIER not null)
-
-
-ALTER TABLE Author
-ADD CONSTRAINT FK_Author_AuthorsSpecification FOREIGN KEY (AuthorsSpecification_Id) REFERENCES AuthorsSpecification (Id)
-
-ALTER TABLE AuthorsSpecification
-ADD CONSTRAINT FK_AuthorsSpecification_Author FOREIGN KEY (Author_Id) REFERENCES Author (Id)
+"Author_Id" UNIQUEIDENTIFIER UNIQUE FOREIGN KEY REFERENCES Author(id) not null)
 
 CREATE TABLE "Book"
 ("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
@@ -47,3 +39,7 @@ CREATE TABLE "BookPublishingHouse"
 "PublishingHouse_Id" UNIQUEIDENTIFIER not null,
 CONSTRAINT FK_BookPublishingHouse_Book_BookId FOREIGN KEY (Book_Id) REFERENCES Book ("Id"),
 CONSTRAINT FK_BookPublishingHouse_PublishingHouse_PublishingHouseId FOREIGN KEY (PublishingHouse_Id) REFERENCES PublishingHouse ("Id"))
+
+
+
+
