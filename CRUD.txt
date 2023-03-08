@@ -1,0 +1,72 @@
+select * from State
+
+Insert into State (Id, Name, Continent, Size)
+Values (NEWID(), 'Great Britain', 'Europe', 2436410),
+(NEWID(), 'USA', 'South America', 9834000),
+(NEWID(), 'Australia', 'Australia', 7688000)
+
+
+select * from Author
+
+Insert into Author (Id, Name, Surname, [Date of birth], State_Id)
+VALUES (NEWID(), 'Liane', 'Morirarty', '1987-06-09', (SELECT Id FROM State WHERE Name = 'Australia')),
+(NEWID(), 'John', 'Maars', '1977-06-09', (SELECT Id FROM State WHERE Name ='Great Britain')),
+(NEWID(), 'Stephan', 'King', '1947-09-21', (SELECT Id FROM State WHERE Name ='USA')),
+(NEWID(), 'Dorothy', 'Koomson', '1971-08-01', (SELECT Id FROM State WHERE Name = 'Great Britain')),
+(NEWID(), 'Markus', 'Zusak', '1975-06-23', (SELECT Id FROM State WHERE Name = 'Australia')),
+(NEWID(), 'J.K.', 'Rowling', '1965-07-31', (SELECT Id FROM State WHERE Name = 'Great Britain'))
+
+SELECT * FROM Book
+
+INSERT INTO Book (Id, Title, [Number of pages], Genre, Author_Id)
+VALUES (NEWID(), 'Goodnight, Beautiful', 356, null, (SELECT Id FROM Author WHERE Name = 'Dorothy' and Surname = 'Koomson')),
+(NEWID(), 'The Rose Petal Beach', 487, 'Thriller', (SELECT Id FROM Author WHERE Name = 'Dorothy' and Surname = 'Koomson')),
+(NEWID(), 'Carrie', 266, 'Horror', (SELECT Id FROM Author WHERE Name = 'Stephan' and Surname = 'King')),
+(NEWID(), 'Little Lies', 397, null, (SELECT Id FROM Author WHERE Name = 'Liane' and Surname = 'Morirarty'))
+
+
+ALTER TABLE Author ALTER COLUMN [Dat of birth] date;
+
+SELECT * FROM Author WHERE Surname like '%K%';
+
+SELECT * FROM Author WHERE year(convert(datetime,[Date of birth],104)) > year(convert(datetime,'1967-27-01',104));
+SELECT * FROM Author WHERE year(convert(datetime,[Date of birth],104)) > year(convert(datetime,'1967-27-01',104)) and Surname like 'M%';
+
+
+SELECT * FROM Author WHERE [Date of birth] > '1977-01-01'
+SELECT * FROM Author WHERE [Date of birth] < '1976-01-01' and Surname like '%K%';
+
+SELECT a.Name, a.Surname, s.Name from Author a inner join State s on s.Id=a.State_Id
+ORDER BY s.Name, a.Name
+
+SELECT s.Name, COUNT (a.State_Id) FROM Author a inner join State s on s.Id = a.State_Id
+GROUP BY s.Name
+
+SELECT b.Title, b.Genre, a.Name from Book b inner join Author a on a.Id= b.Author_Id
+ORDER BY b.Genre
+
+
+
+JOINS:
+
+SELECT * FROM Author a inner join State s on s.Id = a. State_Id
+SELECT * FROM Author a inner join State s on s.Id = a. State_Id where a. Name like '%J%'
+
+SELECT * FROM Author a left join State s on s.Id = a.State_Id
+SELECT * FROM Author a full outer join State s on s.Id = a.State_Id
+SELECT * FROM Author a left join State s on s.Id = a.State_Id
+
+SELECT * FROM Book b inner join Author a on a.Id = b.Author_Id
+SELECT * FROM Book b full outer join Author a on a.Id = b.Author_Id
+SELECT * FROM Book b full outer join Author a on a.Id = b.Author_Id WHERE b. [Number of pages] <400
+SELECT * FROM Book b left join Author a on a.Id = b.Author_Id
+SELECT * FROM Book b right join Author a on a.Id = b.Author_Id
+
+
+UPDATE: 
+
+UPDATE Author
+SET Name = 'Stephen' WHERE Name = 'Stephan'
+
+DELETE FROM Author
+WHERE Id = '867334F1-2A6F-4929-82F6-7BC2B27D462E'
