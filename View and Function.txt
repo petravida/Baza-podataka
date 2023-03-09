@@ -37,3 +37,38 @@ SELECT LOWER ("Name") FROM Author
 
 SELECT LOWER (a. "Name") as Name, LOWER (a. Surname) as Surname, UPPER (b. Title) as Book FROM "Author" a 
 inner join "Book" b on a.Id = b.Author_Id
+
+SELECT * FROM "Book"
+
+INSERT INTO "Book" ("Id", "Title", "Number of pages", "Genre", "Author_Id")
+VALUES (NEWID(), 'Apples Never Fall', 480, 'Drama', (SELECT "Id" FROM "Author" WHERE "Name" = 'Liane' and "Surname" = 'Morirarty')),
+(NEWID(), 'The Cupid Effect', 352, null, (SELECT "Id" FROM "Author" WHERE "Name" = 'Liane' and "Surname" = 'Morirarty')),
+(NEWID(), 'Pet Sematary', 374, null, (SELECT "Id" FROM "Author" WHERE "Name" = 'Stephen' and "Surname" = 'King'))
+
+UPDATE "Author" 
+SET "Surname" = 'Moriarty' WHERE "Surname" = 'Morirarty'
+
+SELECT * FROM "Author"
+
+SELECT * FROM "Book" WHERE "Genre" is null
+SELECT * FROM "Book" WHERE "Genre" is not null
+
+SELECT a."Name", a."Surname", b."Title", b.[Number of Pages] from "Author" a
+inner join "Book" b on a."Id" = b."Author_Id"
+ORDER BY b."Title"
+
+SELECT b."Title", b.[Number of pages] FROM "Book" b ORDER BY b.[Number of pages]
+
+SELECT a."Name", a."Surname", b."Title", b.[Number of Pages] FROM "Author" a
+inner join "Book" b on a."Id" = b."Author_Id"
+ORDER BY b.[Number of pages] 
+
+SELECT s."Name", a."Name", a."Surname" FROM "State" s 
+left join "Author" a on s."Id" = a."State_Id"
+
+
+CREATE VIEW "BritishLiterature"
+as (SELECT s."Name", a."Surname", b."Title" as "List"
+FROM "State" s 
+inner join "Author" a on a."State_Id" = s."Id"
+inner join "Book" b on a."Id" = b."Author_Id")
