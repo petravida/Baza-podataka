@@ -1,0 +1,39 @@
+CREATE FUNCTION "Whowroteit"
+(@nameofauthor varchar (100))
+RETURNS table
+AS
+RETURN SELECT "Name", "Surname" 
+FROM "Author"
+WHERE @nameofauthor = Name
+
+SELECT * FROM dbo.Whowroteit('Dorothy'); 
+
+
+CREATE FUNCTION "WhichBook"
+(@lenght int)
+RETURNS TABLE
+AS
+RETURN SELECT Title
+FROM Book
+WHERE @lenght = [Number of pages]
+
+
+SELECT * FROM dbo.WhichBook(356);
+
+ALTER TABLE Author ALTER COLUMN [Dat of birth] date;
+
+
+CREATE VIEW "Library" 
+as (SELECT a. "Name", a. "Surname", b. "Title" 
+FROM "Book" bk
+left join "Author" a on a."Id" = b.Author_Id);
+
+
+INSERT INTO Book ("Id", "Title", "[Number of pages]", "Genre", "Author_Id")
+VALUES (NEWID(), 'Misery', 310, 'Horror', (SELECT Id FROM Author WHERE Name = 'Stephen' and Surname = 'King')),
+(NEWID(), 'It', 884, null, (SELECT Id FROM Author WHERE Name = 'Stephen' and Surname = 'King'))
+
+SELECT LOWER ("Name") FROM Author
+
+SELECT LOWER (a. "Name") as Name, LOWER (a. Surname) as Surname, UPPER (b. Title) as Book FROM "Author" a 
+inner join "Book" b on a.Id = b.Author_Id
