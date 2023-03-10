@@ -1,0 +1,171 @@
+CREATE DATABASE CLEANINGSERVICES
+
+CREATE TABLE "City"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"Country" varchar (100) not null,
+"Population" int null)
+
+CREATE TABLE "Customer"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"LastName" varchar (50) not null,
+"Date of Birth" date not null,
+"City_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "City" ("Id") not null)
+
+CREATE TABLE "Company"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (100) not null,
+"Number of Employees" int not null,
+"Weekend Work" bit not null,
+"City_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "City" ("Id") not null)
+
+--CREATE TABLE "CustomerCompany"
+--("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+--"Customer_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Customer" ("Id") not null,
+--"Company_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Company" ("Id") not null)
+
+--DROP TABLE "CustomerCompany"
+
+CREATE TABLE "Director"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"LastName" varchar (50) not null,
+"Date of Birth" date null,
+"Company_Id" UNIQUEIDENTIFIER UNIQUE FOREIGN KEY REFERENCES "Company" ("Id") not null)
+
+CREATE TABLE "Service"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Object Type" varchar (100) not null,
+"Price" bit not null,
+"Hours" int not null,)
+
+ALTER TABLE "Service"
+DROP COLUMN "Price"
+
+ALTER TABLE "Service"
+ADD "Price" int null
+
+CREATE TABLE "CompanyService"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Company_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Company" ("Id") not null,
+"Service_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Service" ("Id") not null)
+
+CREATE TABLE "CustomerCompServ"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Customer_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Customer" ("Id") not null,
+"CompanyService" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "CompanyService" ("Id") not null)
+
+CREATE TABLE "Employee"
+("Id" UNIQUEIDENTIFIER PRIMARY KEY not null,
+"Name" varchar (50) not null,
+"LastName" varchar (50) not null,
+"Ages" int null,
+"First Day" date null,
+"Company_Id" UNIQUEIDENTIFIER FOREIGN KEY REFERENCES "Company" ("Id") not null)
+
+
+
+SELECT * FROM "City"
+
+INSERT INTO "City" ("Id", "Name", "Country", "Population")
+VALUES (NEWID(), 'Osijek', 'Croatia', 120000),
+(NEWID(), 'Zagreb', 'Croatia', null),
+(NEWID (), 'Split', 'Croatia', 161000),
+(NEWID(), 'Rijeka', 'Croatia', null)
+
+SELECT * FROM "Company"
+
+INSERT INTO "Company" ("Id", "Name", "Number of Employees", "Weekend Work", "City_Id")
+VALUES (NEWID(), 'Samo cistoca', 30, 1, (SELECT "Id" FROM "City" WHERE "Name" = 'Osijek')),
+(NEWID(), 'Najsjajniji dom', 54, 0, (SELECT "Id" FROM "City" WHERE "Name" = 'Zagreb')),
+(NEWID(), 'Akcija ciscenja', 10, 0, (SELECT "Id" FROM "City" WHERE "Name" = 'Osijek')),
+(NEWID(), 'Sjaj', 36, 1, (SELECT "Id" FROM "City" WHERE "Name" = 'Rijeka')),
+(NEWID(), 'Cisto kao suza', 105, 1, (SELECT "Id" FROM "City" WHERE "Name" = 'Zagreb')),
+(NEWID(), 'Dijamant', 49, 0, (SELECT "Id" FROM "City" WHERE "Name" = 'Osijek'))
+
+SELECT * FROM "Service"
+
+INSERT INTO "Service" ("Id", "Object Type", "Price", "Hours")
+VALUES (NEWID(), 'Cijela kuca', 150, 4),
+(NEWID(), 'Automobil', 80, 2),
+(NEWID(), 'Peglanje', 30, 1)
+
+DELETE FROM "Service"
+
+SELECT * FROM "CompanyService"
+
+INSERT INTO "CompanyService"
+VALUES (NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Najsjajniji dom'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Cijela kuca')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Akcija ciscenja'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Cijela kuca')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Akcija ciscenja'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Automobil')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Sjaj'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Cijela kuca')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Dijamant'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Cijela kuca')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Dijamant'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Peglanje')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Samo cistoca'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Cijela kuca')),
+(NEWID(), (SELECT "Id" FROM "Company" WHERE "Name" = 'Sjaj'), (SELECT "Id" FROM "Service" WHERE "Object Type" = 'Automobil'))
+
+DELETE FROM "CompanyService"
+
+SELECT * FROM "Company" WHERE "Name" like '%ci%'
+SELECT * FROM "Company" WHERE "Weekend Work" = 1
+SELECT * FROM "Service" WHERE "Price" < 100
+SELECT * FROM "Service" WHERE "Hours" > 3
+SELECT * FROM "Company" WHERE "Number of Employees" between 35 and 100
+SELECT * FROM "Company" WHERE "Number of Employees" between 35 and 100 and "Weekend Work" like 1
+
+SELECT c. "Name", co. "Name" FROM "City" c inner join "Company" co on c."Id" = co."City_Id"
+
+SELECT c. "Name", co. "Name", co. [Number of Employees] FROM "City" c inner join "Company" co
+on c."Id" = co."City_Id" ORDER BY co.[Number of Employees]
+
+SELECT * FROM "Employee"
+
+INSERT INTO "Employee" ("Id", "Name", "LastName", "Ages", "First Day", "Company_Id")
+VALUES (NEWID(), 'Iva', 'Ivic', 31, null,(SELECT "Id" FROM "Company" WHERE "Name" = 'Najsjajniji dom')),
+(NEWID(), 'Marko', 'Maric', 51, '1995-01-01', (SELECT "Id" FROM "Company" WHERE "Name" = 'Sjaj')),
+(NEWID(), 'Petra', 'Peric', 27, null, (SELECT "Id" FROM "Company" WHERE "Name" = 'Sjaj')),
+(NEWID(), 'Silvija', 'Silvic', 19, '01-01-2023', (SELECT "Id" FROM "Company" WHERE "Name" = 'Dijamant')),
+(NEWID(), 'Sara', 'Saric', 20, '2022-01-01', (SELECT "Id" FROM "Company" WHERE "Name" = 'Najsjajniji dom')),
+(NEWID(), 'Klara', 'Klaric', 30, '2005-01-01', (SELECT "Id" FROM "Company" WHERE "Name" = 'Dijamant')),
+(NEWID(), 'Ivan', 'Ivic', 49, '2003-01-01', (SELECT "Id" FROM "Company" WHERE "Name" = 'Akcija ciscenja')),
+(NEWID(), 'Mislav', 'Miric', 25, null, (SELECT "Id" FROM "Company" WHERE "Name" = 'Najsjajniji dom'))
+
+DELETE FROM "Employee"
+
+SELECT e. "Name", e. "LastName", e. [First Day], co. "Name" FROM "Employee" e 
+right join "Company" co on co."Id" = e."Company_Id"
+
+SELECT co. "Name", e. "Name", e. "LastName", e. "Ages" FROM "Company" co
+left join "Employee" e on co."Id" = e."Company_Id" 
+
+SELECT co. "Name", e. "Name", e. "LastName", e. "Ages" FROM "Company" co
+left join "Employee" e on co."Id" = e."Company_Id" ORDER BY co."Name"
+
+SELECT e. "LastName", e. "Ages", co. "Name", c. "Name" FROM "Employee" e
+full outer join "Company" co on co."Id" = e."Company_Id" left join "City" c on c."Id" = co."City_Id" 
+ORDER BY c. "Name"
+
+CREATE VIEW WeekendCleaning 
+as (SELECT co. [Weekend Work], co. "Name", c. "Name" as "CityName" FROM "Company" co
+inner join "City" c on co.City_Id = c.Id)
+
+SELECT * FROM dbo.WeekendCleaning
+SELECT * FROM dbo.WeekendCleaning WHERE "CityName" = 'Osijek'
+
+SELECT LOWER ("Name") FROM "Company"
+SELECT UPPER ("LastName") FROM "Employee"
+SELECT SUBSTRING ("Name", 3, 7) FROM "Company"
+SELECT * FROM "Employee" WHERE "Ages" < 50
+
+
+CREATE FUNCTION HowmanyEmployeeswork
+(@NameofCompany varchar (100))
+RETURNS TABLE
+AS
+RETURN SELECT "Number of Employees"
+FROM "Company"
+WHERE @NameofCompany = "Name"
+
+SELECT * FROM dbo.HowmanyEmployeeswork('Sjaj')
+SELECT * FROM dbo.HowmanyEmployeeswork('Najsjajniji dom')
